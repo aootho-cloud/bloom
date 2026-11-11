@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>Bloom – Period Tracker</title>
+  <meta name="description" content="A simple, private period tracker. Your data stays on this device.">
+  <meta name="theme-color" content="#fde7ee">
+  <link rel="manifest" href="manifest.webmanifest">
+  <link rel="icon" href="icons/icon.svg" type="image/svg+xml">
+  <link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-title" content="Bloom">
+  <meta name="apple-mobile-web-app-status-bar-style" content="default">
+  <link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+  <a class="skip-link" href="#app">Skip to content</a>
+
+  <header class="app-header">
+    <a href="#/today" class="brand" aria-label="Bloom home">
+      <img src="icons/icon.svg" alt="" width="28" height="28">
+      <span>Bloom</span>
+    </a>
+  </header>
+
+  <main id="app" class="app-main" tabindex="-1"></main>
+
+  <nav class="bottom-nav" aria-label="Main">
+    <a href="#/today" data-route="today" data-testid="nav-today">
+      <svg aria-hidden="true" viewBox="0 0 24 24"><path d="M12 3c3 4 6 7.5 6 11a6 6 0 0 1-12 0c0-3.5 3-7 6-11z"/></svg>
+      <span>Today</span>
+    </a>
+    <a href="#/calendar" data-route="calendar" data-testid="nav-calendar">
+      <svg aria-hidden="true" viewBox="0 0 24 24"><rect x="3.5" y="5" width="17" height="15" rx="2.5"/><path d="M3.5 10h17M8 3v4M16 3v4"/></svg>
+      <span>Calendar</span>
+    </a>
+    <a href="#/log" data-route="log" data-testid="nav-log">
+      <svg aria-hidden="true" viewBox="0 0 24 24"><circle cx="12" cy="12" r="8.5"/><path d="M12 8v8M8 12h8"/></svg>
+      <span>Log</span>
+    </a>
+    <a href="#/history" data-route="history" data-testid="nav-history">
+      <svg aria-hidden="true" viewBox="0 0 24 24"><path d="M4 20V10M10 20V4M16 20v-7M22 20H2"/></svg>
+      <span>History</span>
+    </a>
+    <a href="#/settings" data-route="settings" data-testid="nav-settings">
+      <svg aria-hidden="true" viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M12 2.5v3M12 18.5v3M2.5 12h3M18.5 12h3M5.3 5.3l2.1 2.1M16.6 16.6l2.1 2.1M5.3 18.7l2.1-2.1M16.6 7.4l2.1-2.1"/></svg>
+      <span>Settings</span>
+    </a>
+  </nav>
+
+  <div id="toast" class="toast" role="status" aria-live="polite"></div>
+
+  <script type="module" src="js/app.js"></script>
+</body>
+</html>
