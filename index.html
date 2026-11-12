@@ -182,14 +182,14 @@ input:focus-visible, textarea:focus-visible { border-color: var(--primary); }
 .pills { display: flex; flex-wrap: wrap; gap: 8px; }
 .pill { position: relative; }
 .pill input { position: absolute; opacity: 0; width: 1px; height: 1px; }
-.pill span {
+.pill input + span {
   display: inline-flex; align-items: center; min-height: 40px; padding: 8px 14px;
   border-radius: 999px; border: 1.5px solid #d9a3b4; background: var(--surface);
   font-weight: 600; cursor: pointer; user-select: none;
 }
 .pill input:checked + span { background: var(--primary); border-color: var(--primary); color: #fff; }
 .pill input:focus-visible + span { outline: 3px solid var(--focus); outline-offset: 2px; }
-.pill span:hover { border-color: var(--primary); }
+.pill input + span:hover { border-color: var(--primary); }
 
 .date-nav { display: flex; align-items: center; justify-content: space-between; gap: 8px; margin-bottom: 16px; }
 .date-nav h1 { margin: 0; text-align: center; flex: 1; font-size: 1.25rem; }
@@ -219,6 +219,10 @@ a.cal-day:hover { background: var(--surface-2); }
   background: var(--primary-strong);
 }
 .cal-day.period.has-log::after { background: #fff; }
+.cal-heart { position: absolute; top: -2px; right: -2px; width: 15px; height: 15px; }
+.cal-heart svg, .heart-icon svg { width: 100%; height: 100%; fill: #e0102f; stroke: #fff; stroke-width: 2.5; }
+.heart-icon { display: inline-block; width: 16px; height: 16px; flex: none; }
+.pill .heart-icon { margin-right: 6px; }
 
 .legend { display: flex; flex-wrap: wrap; gap: 10px 16px; margin-top: 16px; padding: 0; list-style: none; font-size: .85rem; }
 .legend li { display: flex; align-items: center; gap: 6px; }
@@ -463,8 +467,9 @@ function setDay(key, entry) {
     symptoms: entry.symptoms || [],
     mood: entry.mood || '',
     notes: (entry.notes || '').trim(),
+    intercourse: !!entry.intercourse,
   };
-  const empty = !clean.flow && !clean.symptoms.length && !clean.mood && !clean.notes;
+  const empty = !clean.flow && !clean.symptoms.length && !clean.mood && !clean.notes && !clean.intercourse;
   if (empty) delete state.days[key];
   else state.days[key] = clean;
   save();
@@ -629,6 +634,8 @@ const SYMPTOMS = [
 ];
 
 const MOODS = ['Happy', 'Calm', 'Sensitive', 'Sad', 'Irritable', 'Anxious'];
+
+const HEART = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 21s-7.5-4.6-9.6-9.2C1 8.6 3 5 6.6 5c2.1 0 3.6 1.2 4.4 2.6h2C13.8 6.2 15.3 5 17.4 5 21 5 23 8.6 21.6 11.8 19.5 16.4 12 21 12 21z"/></svg>';
 
 const flowLabel = (v) => FLOWS.find((f) => f.value === v)?.label || '';
 
@@ -927,10 +934,11 @@ function render(el) {
       </section>
     </div>
 
-    ${todayEntry && (todayEntry.symptoms?.length || todayEntry.mood || todayEntry.notes) ? `
+    ${todayEntry && (todayEntry.symptoms?.length || todayEntry.mood || todayEntry.notes || todayEntry.intercourse) ? `
       <section class="card" aria-labelledby="today-log-h">
         <h2 id="today-log-h">Today's log</h2>
         ${todayEntry.mood ? `<p><strong>Mood:</strong> ${todayEntry.mood}</p>` : ''}
+        ${todayEntry.intercourse ? `<p style="display:flex;align-items:center;gap:6px"><span class="heart-icon" aria-hidden="true">${HEART}</span>Intercourse logged</p>` : ''}
         ${todayEntry.symptoms?.length ? `<p><strong>Symptoms:</strong> ${todayEntry.symptoms.join(', ')}</p>` : ''}
         ${todayEntry.notes ? `<p class="muted small">Has a note</p>` : ''}
       </section>` : ''}
@@ -1045,13 +1053,15 @@ function render(el, params) {
       else if (flags.has('fertile')) { cls.push('fertile'); desc.push('fertile window'); }
     }
     if (entry && (entry.symptoms?.length || entry.mood || entry.notes)) { cls.push('has-log'); desc.push('has notes'); }
+    const heart = entry?.intercourse ? `<span class="cal-heart" aria-hidden="true">${HEART}</span>` : '';
+    if (heart) desc.push('intercourse');
     if (diffDays(date, t) === 0) { cls.push('today'); desc.unshift('today'); }
     if (isFuture) cls.push('future');
 
     const label = [fmt(date, { day: 'numeric', month: 'long' }), ...desc].join(', ');
     cells.push(isFuture
-      ? `<span class="${cls.join(' ')}" role="img" aria-label="${label}">${day}</span>`
-      : `<a class="${cls.join(' ')}" href="#/log/${key}" aria-label="${label}" data-testid="day-${key}"${diffDays(date, t) === 0 ? ' aria-current="date"' : ''}>${day}</a>`);
+      ? `<span class="${cls.join(' ')}" role="img" aria-label="${label}">${day}${heart}</span>`
+      : `<a class="${cls.join(' ')}" href="#/log/${key}" aria-label="${label}" data-testid="day-${key}"${diffDays(date, t) === 0 ? ' aria-current="date"' : ''}>${day}${heart}</a>`);
   }
 
   el.innerHTML = `
@@ -1071,6 +1081,7 @@ function render(el, params) {
         <li><span class="swatch fertile" aria-hidden="true"></span>Fertile</li>
         <li><span class="swatch ovulation" aria-hidden="true"></span>Ovulation</li>
         <li><span class="swatch today" aria-hidden="true"></span>Today</li>
+        <li><span class="heart-icon" aria-hidden="true">${HEART}</span>Intercourse</li>
       </ul>
     </section>
     <p class="muted small center">Tap a day to log your period, symptoms or mood.</p>
@@ -1135,6 +1146,16 @@ function render(el, params) {
         </div>
       </fieldset>
 
+      <fieldset>
+        <legend>Intimacy</legend>
+        <div class="pills">
+          <label class="pill" for="intercourse">
+            <input type="checkbox" id="intercourse" name="intercourse" value="yes" ${entry.intercourse ? 'checked' : ''} data-testid="log-intercourse">
+            <span><span class="heart-icon" aria-hidden="true">${HEART}</span>Had intercourse</span>
+          </label>
+        </div>
+      </fieldset>
+
       <div class="field">
         <label for="notes">Notes</label>
         <textarea id="notes" name="notes" data-testid="log-notes">${escapeHtml(entry.notes)}</textarea>
@@ -1155,6 +1176,7 @@ function render(el, params) {
       flow: fd.get('flow') || '',
       symptoms: fd.getAll('symptoms'),
       mood: fd.get('mood') || '',
+      intercourse: fd.get('intercourse') === 'yes',
       notes: fd.get('notes') || '',
     });
     toast('Saved');
