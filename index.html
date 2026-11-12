@@ -340,14 +340,6 @@ input[type="email"], input[type="password"], input[type="text"] {
       <svg aria-hidden="true" viewBox="0 0 24 24"><rect x="3.5" y="5" width="17" height="15" rx="2.5"/><path d="M3.5 10h17M8 3v4M16 3v4"/></svg>
       <span>Calendar</span>
     </a>
-    <a href="#/log" data-route="log" data-testid="nav-log">
-      <svg aria-hidden="true" viewBox="0 0 24 24"><circle cx="12" cy="12" r="8.5"/><path d="M12 8v8M8 12h8"/></svg>
-      <span>Log</span>
-    </a>
-    <a href="#/history" data-route="history" data-testid="nav-history">
-      <svg aria-hidden="true" viewBox="0 0 24 24"><path d="M4 20V10M10 20V4M16 20v-7M22 20H2"/></svg>
-      <span>History</span>
-    </a>
     <a href="#/settings" data-route="settings" data-testid="nav-settings">
       <svg aria-hidden="true" viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M12 2.5v3M12 18.5v3M2.5 12h3M18.5 12h3M5.3 5.3l2.1 2.1M16.6 16.6l2.1 2.1M5.3 18.7l2.1-2.1M16.6 7.4l2.1-2.1"/></svg>
       <span>Settings</span>
@@ -1187,70 +1179,6 @@ function pill(type, name, value, label, checked) {
 return { title, render };
 })();
 
-/* ===== View: history ===== */
-const HistoryView = (() => {
-const title = 'History';
-
-function render(el) {
-  const s = getStats(getState());
-
-  if (!s.periods.length) {
-    el.innerHTML = `
-      <h1 tabindex="-1">History</h1>
-      <section class="card"><p>No periods logged yet.</p>
-      <a class="btn btn-primary" href="#/today">Get started</a></section>`;
-    return;
-  }
-
-  const periods = [...s.periods].reverse();
-  const recent = s.cycles.slice(-6);
-  const max = Math.max(45, ...recent.map((c) => c.length));
-
-  el.innerHTML = `
-    <h1 tabindex="-1">History</h1>
-
-    <div class="grid-2">
-      <section class="card"><h2 class="stat-label">Avg. cycle</h2><p class="stat-value">${plural(s.avgCycle, 'day')}</p></section>
-      <section class="card"><h2 class="stat-label">Avg. period</h2><p class="stat-value">${plural(s.avgPeriod, 'day')}</p></section>
-      <section class="card"><h2 class="stat-label">Cycles tracked</h2><p class="stat-value">${s.cycles.length}</p></section>
-      <section class="card"><h2 class="stat-label">Shortest / longest</h2><p class="stat-value">${s.cycles.length ? `${Math.min(...s.cycles.map((c) => c.length))} / ${Math.max(...s.cycles.map((c) => c.length))}` : '—'}</p></section>
-    </div>
-
-    ${recent.length ? `
-    <section class="card" aria-labelledby="cycle-len-h">
-      <h2 id="cycle-len-h">Recent cycle lengths</h2>
-      <ul class="bars" style="list-style:none;margin:0;padding:0">
-        ${recent.map((c) => `
-          <li class="bar-row">
-            <span>${fmt(fromKey(c.start))}</span>
-            <span class="bar-track" aria-hidden="true"><span class="bar-fill" style="display:block;width:${(c.length / max) * 100}%"></span></span>
-            <span><span class="visually-hidden">Cycle length </span>${c.length}d</span>
-          </li>`).join('')}
-      </ul>
-    </section>` : ''}
-
-    <section class="card" aria-labelledby="periods-h">
-      <h2 id="periods-h">Periods</h2>
-      <ul class="period-list" data-testid="period-list">
-        ${periods.map((p, i) => {
-          const newer = periods[i - 1];
-          const cycleLen = newer ? diffDays(fromKey(newer.start), fromKey(p.start)) : null;
-          return `<li>
-            <div>
-              <div class="period-dates">${fmt(fromKey(p.start), { day: 'numeric', month: 'short', year: 'numeric' })}${p.end !== p.start ? ` – ${fmt(fromKey(p.end))}` : ''}</div>
-              <div class="muted small">${plural(p.length, 'day')}${cycleLen ? ` · ${cycleLen}-day cycle` : i === 0 ? ' · current cycle' : ''}</div>
-            </div>
-            <a class="icon-btn" href="#/log/${p.start}" aria-label="Open ${fmt(fromKey(p.start), { day: 'numeric', month: 'long' })}">›</a>
-          </li>`;
-        }).join('')}
-      </ul>
-    </section>
-  `;
-}
-
-return { title, render };
-})();
-
 /* ===== View: settings ===== */
 const SettingsView = (() => {
 const title = 'Settings';
@@ -1370,7 +1298,7 @@ return { title, render };
 /* ===== App / router ===== */
 // Hash router + app boot.
 
-const routes = { today: TodayView, calendar: CalendarView, log: LogView, history: HistoryView, settings: SettingsView };
+const routes = { today: TodayView, calendar: CalendarView, log: LogView, settings: SettingsView };
 const main = document.getElementById('app');
 let firstLoad = true;
 
