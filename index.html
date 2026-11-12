@@ -34,6 +34,7 @@
   --radius-sm: 12px;
   --shadow: 0 6px 20px rgba(194, 24, 91, 0.08);
   --nav-h: 68px;
+  --logo: url("data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCA1MTIgNTEyIj4KICA8cmVjdCB3aWR0aD0iNTEyIiBoZWlnaHQ9IjUxMiIgcng9IjExMiIgZmlsbD0iI2ZkZTdlZSIvPgogIDxnIHRyYW5zZm9ybT0idHJhbnNsYXRlKDI1NiAyNjIpIj4KICAgIDxnIGZpbGw9IiNmNDhmYjEiPgogICAgICA8ZWxsaXBzZSByeD0iNTYiIHJ5PSIxMDQiIHRyYW5zZm9ybT0icm90YXRlKDApIHRyYW5zbGF0ZSgwIC04OCkiLz4KICAgICAgPGVsbGlwc2Ugcng9IjU2IiByeT0iMTA0IiB0cmFuc2Zvcm09InJvdGF0ZSg3MikgdHJhbnNsYXRlKDAgLTg4KSIvPgogICAgICA8ZWxsaXBzZSByeD0iNTYiIHJ5PSIxMDQiIHRyYW5zZm9ybT0icm90YXRlKDE0NCkgdHJhbnNsYXRlKDAgLTg4KSIvPgogICAgICA8ZWxsaXBzZSByeD0iNTYiIHJ5PSIxMDQiIHRyYW5zZm9ybT0icm90YXRlKDIxNikgdHJhbnNsYXRlKDAgLTg4KSIvPgogICAgICA8ZWxsaXBzZSByeD0iNTYiIHJ5PSIxMDQiIHRyYW5zZm9ybT0icm90YXRlKDI4OCkgdHJhbnNsYXRlKDAgLTg4KSIvPgogICAgPC9nPgogICAgPGNpcmNsZSByPSI2MiIgZmlsbD0iI2MyMTg1YiIvPgogICAgPGNpcmNsZSByPSIyNCIgZmlsbD0iI2ZkZTdlZSIvPgogIDwvZz4KPC9zdmc+");
   --font: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
 }
 
@@ -252,12 +253,74 @@ a.cal-day:hover { background: var(--surface-2); }
 .toast.show { opacity: 1; transform: translate(-50%, 0); }
 
 @media (prefers-reduced-motion: reduce) {
-  * { transition: none !important; }
+  * { transition: none !important; animation: none !important; }
 }
+
+/* ---------- App states: loading / auth / app ---------- */
+body:not([data-state="app"]) .app-header,
+body:not([data-state="app"]) .app-main,
+body:not([data-state="app"]) .bottom-nav,
+body:not([data-state="app"]) .skip-link { display: none; }
+body:not([data-state="auth"]) .auth-wrap { display: none; }
+body:not([data-state="loading"]) .splash { display: none; }
+
+.splash {
+  min-height: 100vh; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 14px;
+  color: var(--muted); font-weight: 600;
+}
+.splash-logo {
+  width: 64px; height: 64px; border-radius: 18px; background: var(--primary-soft) var(--logo) center / 100% no-repeat;
+  animation: pulse 1.4s ease-in-out infinite;
+}
+@keyframes pulse { 50% { transform: scale(.9); opacity: .7; } }
+
+/* ---------- Auth ---------- */
+.auth-wrap {
+  min-height: 100vh; max-width: 420px; margin: 0 auto;
+  padding: calc(env(safe-area-inset-top) + 40px) 16px 40px;
+  display: flex; flex-direction: column; justify-content: center;
+}
+.auth-wrap:focus { outline: none; }
+.auth-brand { text-align: center; margin-bottom: 24px; }
+.auth-brand .logo { width: 72px; height: 72px; margin: 0 auto 10px; border-radius: 20px; background: var(--logo) center / 100% no-repeat; }
+.auth-brand .name { font-size: 2rem; font-weight: 800; color: var(--primary-strong); margin: 0; }
+.auth-brand .tagline { color: var(--muted); margin: 2px 0 0; }
+.auth-wrap h1 { font-size: 1.3rem; }
+.input-wrap { position: relative; }
+.input-wrap input { padding-right: 76px; }
+.reveal {
+  position: absolute; right: 6px; top: 50%; transform: translateY(-50%);
+  min-height: 34px; padding: 4px 10px; border: 0; border-radius: 8px;
+  background: var(--surface-2); color: var(--primary-strong); font-weight: 700; font-size: .85rem; cursor: pointer;
+}
+input[type="email"], input[type="password"], input[type="text"] {
+  width: 100%; min-height: 44px; padding: 10px 12px;
+  border: 1.5px solid #d9a3b4; border-radius: var(--radius-sm); background: var(--surface);
+}
+.form-error { color: #a3122f; font-weight: 600; font-size: .9rem; margin: 0 0 12px; }
+.form-error:empty { display: none; }
+.form-success { color: #1b6b3a; font-weight: 600; font-size: .9rem; margin: 0 0 12px; }
+.form-success:empty { display: none; }
+.link-btn {
+  background: none; border: 0; padding: 4px 2px; cursor: pointer;
+  color: var(--primary-strong); font-weight: 700; text-decoration: underline; text-underline-offset: 3px;
+}
+.auth-switch { text-align: center; margin-top: 16px; }
+.btn[disabled] { opacity: .6; cursor: progress; }
+.account-email { font-weight: 700; word-break: break-all; margin-bottom: 12px; }
   </style>
 </head>
-<body>
+<body data-state="loading">
   <a class="skip-link" href="#app">Skip to content</a>
+
+  <!-- Shown while Firebase checks if you're logged in -->
+  <div id="splash" class="splash" role="status">
+    <span class="splash-logo" aria-hidden="true"></span>
+    <span>Loading Bloom…</span>
+  </div>
+
+  <!-- Login / sign up / forgot password -->
+  <main id="auth" class="auth-wrap" tabindex="-1"></main>
 
   <header class="app-header">
     <a href="#/today" class="brand" aria-label="Bloom home">
@@ -293,8 +356,18 @@ a.cal-day:hover { background: var(--surface-2); }
 
   <div id="toast" class="toast" role="status" aria-live="polite"></div>
 
-<script>
-'use strict';
+<script type="module">
+// Firebase SDK (loaded from Google's CDN)
+import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js';
+import {
+  getAuth, onAuthStateChanged, signInWithEmailAndPassword, createUserWithEmailAndPassword,
+  sendPasswordResetEmail, signOut, setPersistence, browserLocalPersistence,
+} from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js';
+import {
+  initializeFirestore, persistentLocalCache, persistentMultipleTabManager,
+  doc, onSnapshot, setDoc, serverTimestamp,
+} from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js';
+
 (() => {
 /* ===== utils ===== */
 // Date helpers. Dates are stored as local "YYYY-MM-DD" keys.
@@ -344,16 +417,22 @@ function escapeHtml(str = '') {
 }
 
 /* ===== store ===== */
-// Local storage persistence. All data stays on this device.
+// In-memory state for the logged-in user. Every change is saved to
+// Firestore through `persist` (set up in the Firebase section below).
 
-const KEY = 'bloom-data-v1';
+const LEGACY_KEY = 'bloom-data-v1'; // data saved before login existed
 
 const defaults = () => ({
   settings: { cycleLength: 28, periodLength: 5, lutealLength: 14 },
   days: {}, // { 'YYYY-MM-DD': { flow, symptoms: [], mood, notes } }
 });
 
-let state = load();
+let state = defaults();
+let persist = () => Promise.resolve();
+
+function setState(data) {
+  state = normalise(data);
+}
 
 function normalise(data) {
   const base = defaults();
@@ -364,21 +443,23 @@ function normalise(data) {
   return { settings: { ...base.settings, ...(data?.settings || {}) }, days };
 }
 
-function load() {
+/** Data from the old no-login version of Bloom on this device, if any. */
+function readLegacy() {
   try {
-    const raw = localStorage.getItem(KEY);
-    return raw ? normalise(JSON.parse(raw)) : defaults();
+    const raw = localStorage.getItem(LEGACY_KEY);
+    const data = raw ? normalise(JSON.parse(raw)) : null;
+    return data && Object.keys(data.days).length ? data : null;
   } catch {
-    return defaults();
+    return null;
   }
 }
 
+function clearLegacy() {
+  try { localStorage.removeItem(LEGACY_KEY); } catch { /* ignore */ }
+}
+
 function save() {
-  try {
-    localStorage.setItem(KEY, JSON.stringify(state));
-  } catch (e) {
-    console.warn('Could not save data', e);
-  }
+  return persist(state);
 }
 
 const getState = () => state;
@@ -414,12 +495,12 @@ function importData(json) {
   const data = JSON.parse(json);
   if (!data || typeof data !== 'object' || !data.days) throw new Error('Not a Bloom backup file');
   state = normalise(data);
-  save();
+  return save();
 }
 
 function resetAll() {
   state = defaults();
-  save();
+  return save();
 }
 
 /* ===== cycle ===== */
@@ -559,6 +640,234 @@ const MOODS = ['Happy', 'Calm', 'Sensitive', 'Sad', 'Irritable', 'Anxious'];
 
 const flowLabel = (v) => FLOWS.find((f) => f.value === v)?.label || '';
 
+/* ===== Firebase: auth + cloud sync ===== */
+const firebaseConfig = {
+  apiKey: 'AIzaSyBsmaV4qsXg16-ArLB-iYraVivB-uyJJUc',
+  authDomain: 'bloom-b550d.firebaseapp.com',
+  projectId: 'bloom-b550d',
+  storageBucket: 'bloom-b550d.firebasestorage.app',
+  messagingSenderId: '631561081813',
+  appId: '1:631561081813:web:536946b3c0cd5e65ab235c',
+};
+
+const fbApp = initializeApp(firebaseConfig);
+const auth = getAuth(fbApp);
+setPersistence(auth, browserLocalPersistence).catch(() => {});
+// Offline cache: the app keeps working without internet and syncs later.
+const db = initializeFirestore(fbApp, {
+  localCache: persistentLocalCache({ tabManager: persistentMultipleTabManager() }),
+});
+
+// One Firestore document per user: users/{uid} = { settings, days, updatedAt }
+const userDoc = (uid) => doc(db, 'users', uid);
+let unsubscribeSync = null;
+
+persist = (s) => {
+  const user = auth.currentUser;
+  if (!user) return Promise.resolve();
+  return setDoc(userDoc(user.uid), {
+    settings: s.settings,
+    days: s.days,
+    updatedAt: serverTimestamp(),
+  }).catch((e) => {
+    console.error('Sync failed', e);
+    toast('Couldn’t save to your account. Check your connection.');
+  });
+};
+
+const isEditing = () => !!document.activeElement?.closest('form');
+
+/** Listen to the user's document. Resolves once the first data has arrived. */
+function startSync(user) {
+  stopSync();
+  return new Promise((resolve) => {
+    let first = true;
+    const done = () => { if (first) { first = false; resolve(); } };
+
+    unsubscribeSync = onSnapshot(userDoc(user.uid), { includeMetadataChanges: false }, async (snap) => {
+      // Ignore the echo of our own writes.
+      if (!first && snap.metadata.hasPendingWrites) return;
+
+      if (snap.exists()) {
+        setState(snap.data());
+      } else if (snap.metadata.fromCache) {
+        // Offline on a new device: start empty, don't overwrite anything.
+        setState(defaults());
+      } else {
+        // Brand-new account: move any data from the old no-login version.
+        const legacy = readLegacy();
+        setState(legacy || defaults());
+        if (legacy) {
+          await persist(state);
+          clearLegacy();
+          toast('Your earlier data was moved to your account');
+        }
+      }
+
+      if (first) done();
+      else if (!isEditing()) refresh(); // update from another device
+    }, (err) => {
+      console.error('Load failed', err);
+      toast('Couldn’t load your data. Check your connection.');
+      done();
+    });
+  });
+}
+
+function stopSync() {
+  if (unsubscribeSync) { unsubscribeSync(); unsubscribeSync = null; }
+}
+
+async function logOut() {
+  stopSync();
+  await signOut(auth);
+  setState(defaults());
+}
+
+const AUTH_ERRORS = {
+  'auth/invalid-credential': 'Email or password is incorrect.',
+  'auth/wrong-password': 'Email or password is incorrect.',
+  'auth/user-not-found': 'Email or password is incorrect.',
+  'auth/invalid-email': 'Please enter a valid email address.',
+  'auth/missing-email': 'Please enter your email address.',
+  'auth/missing-password': 'Please enter your password.',
+  'auth/email-already-in-use': 'An account with this email already exists. Try logging in.',
+  'auth/weak-password': 'Password must be at least 6 characters.',
+  'auth/too-many-requests': 'Too many attempts. Please wait a few minutes and try again.',
+  'auth/network-request-failed': 'No internet connection. Please try again.',
+  'auth/operation-not-allowed': 'Email/password login isn’t enabled in Firebase yet.',
+  'auth/user-disabled': 'This account has been disabled.',
+};
+const authMessage = (e) => AUTH_ERRORS[e?.code] || 'Something went wrong. Please try again.';
+
+/* ===== View: auth (login / sign up / forgot password) ===== */
+const AuthView = (() => {
+  const el = document.getElementById('auth');
+
+  const brand = `
+    <div class="auth-brand">
+      <div class="logo" aria-hidden="true"></div>
+      <p class="name">Bloom</p>
+      <p class="tagline">Your cycle, gently tracked.</p>
+    </div>`;
+
+  const passwordField = (id, label, autocomplete) => `
+    <div class="field">
+      <label for="${id}">${label}</label>
+      <div class="input-wrap">
+        <input type="password" id="${id}" autocomplete="${autocomplete}" required minlength="6" data-testid="${id}">
+        <button type="button" class="reveal" aria-pressed="false" aria-controls="${id}" data-testid="${id}-reveal">Show<span class="visually-hidden"> password</span></button>
+      </div>
+    </div>`;
+
+  const emailField = (value = '') => `
+    <div class="field">
+      <label for="auth-email">Email</label>
+      <input type="email" id="auth-email" autocomplete="email" required value="${escapeHtml(value)}" data-testid="auth-email">
+    </div>`;
+
+  const screens = {
+    login: (email) => `
+      ${brand}
+      <section class="card">
+        <h1 tabindex="-1">Log in</h1>
+        <form id="auth-form" novalidate>
+          ${emailField(email)}
+          ${passwordField('auth-password', 'Password', 'current-password')}
+          <p class="form-error" id="auth-error" role="alert" data-testid="auth-error"></p>
+          <button type="submit" class="btn btn-primary btn-block" data-testid="login-submit">Log in</button>
+        </form>
+        <p class="auth-switch"><button type="button" class="link-btn" data-go="forgot" data-testid="go-forgot">Forgot password?</button></p>
+      </section>
+      <p class="auth-switch">New here? <button type="button" class="link-btn" data-go="signup" data-testid="go-signup">Create an account</button></p>`,
+
+    signup: (email) => `
+      ${brand}
+      <section class="card">
+        <h1 tabindex="-1">Create account</h1>
+        <form id="auth-form" novalidate>
+          ${emailField(email)}
+          ${passwordField('auth-password', 'Password (at least 6 characters)', 'new-password')}
+          ${passwordField('auth-confirm', 'Confirm password', 'new-password')}
+          <p class="form-error" id="auth-error" role="alert" data-testid="auth-error"></p>
+          <button type="submit" class="btn btn-primary btn-block" data-testid="signup-submit">Create account</button>
+        </form>
+      </section>
+      <p class="auth-switch">Already have an account? <button type="button" class="link-btn" data-go="login" data-testid="go-login">Log in</button></p>`,
+
+    forgot: (email) => `
+      ${brand}
+      <section class="card">
+        <h1 tabindex="-1">Reset password</h1>
+        <p class="muted small">Enter your email and we’ll send you a link to set a new password.</p>
+        <form id="auth-form" novalidate>
+          ${emailField(email)}
+          <p class="form-error" id="auth-error" role="alert" data-testid="auth-error"></p>
+          <p class="form-success" id="auth-success" role="status" data-testid="auth-success"></p>
+          <button type="submit" class="btn btn-primary btn-block" data-testid="reset-submit">Send reset link</button>
+        </form>
+      </section>
+      <p class="auth-switch"><button type="button" class="link-btn" data-go="login" data-testid="go-login">Back to log in</button></p>`,
+  };
+
+  function show(mode = 'login', { focus = false, email = '' } = {}) {
+    el.innerHTML = screens[mode](email);
+    document.title = `${{ login: 'Log in', signup: 'Create account', forgot: 'Reset password' }[mode]} – Bloom`;
+    if (focus) el.querySelector('h1').focus();
+
+    el.querySelectorAll('[data-go]').forEach((b) => b.addEventListener('click', () => {
+      show(b.dataset.go, { focus: true, email: el.querySelector('#auth-email')?.value || '' });
+    }));
+
+    el.querySelectorAll('.reveal').forEach((b) => b.addEventListener('click', () => {
+      const input = document.getElementById(b.getAttribute('aria-controls'));
+      const showing = input.type === 'text';
+      input.type = showing ? 'password' : 'text';
+      b.setAttribute('aria-pressed', String(!showing));
+      b.firstChild.textContent = showing ? 'Show' : 'Hide';
+    }));
+
+    const form = el.querySelector('#auth-form');
+    const errEl = el.querySelector('#auth-error');
+    const submit = form.querySelector('[type=submit]');
+
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      errEl.textContent = '';
+      const email = form.querySelector('#auth-email').value.trim();
+      const password = form.querySelector('#auth-password')?.value || '';
+      const fail = (msg, field) => { errEl.textContent = msg; field?.focus(); };
+
+      if (!/^\S+@\S+\.\S+$/.test(email)) return fail('Please enter a valid email address.', form.querySelector('#auth-email'));
+      if (mode !== 'forgot' && password.length < 6) return fail('Password must be at least 6 characters.', form.querySelector('#auth-password'));
+      if (mode === 'signup' && password !== form.querySelector('#auth-confirm').value) {
+        return fail('Passwords don’t match.', form.querySelector('#auth-confirm'));
+      }
+
+      const label = submit.textContent;
+      submit.disabled = true;
+      submit.textContent = mode === 'login' ? 'Logging in…' : mode === 'signup' ? 'Creating account…' : 'Sending…';
+      try {
+        if (mode === 'login') await signInWithEmailAndPassword(auth, email, password);
+        else if (mode === 'signup') await createUserWithEmailAndPassword(auth, email, password);
+        else {
+          await sendPasswordResetEmail(auth, email);
+          el.querySelector('#auth-success').textContent =
+            'If an account exists for this email, a reset link is on its way. Check your inbox and spam folder.';
+        }
+        // On login/sign up, onAuthStateChanged takes over.
+      } catch (err) {
+        fail(authMessage(err));
+      } finally {
+        submit.disabled = false;
+        submit.textContent = label;
+      }
+    });
+  }
+
+  return { show };
+})();
+
 /* ===== View: today ===== */
 const TodayView = (() => {
 const title = 'Today';
@@ -654,7 +963,7 @@ function renderWelcome(el, state) {
   el.innerHTML = `
     <section class="card">
       <h1 tabindex="-1">Welcome to Bloom</h1>
-      <p>A simple period tracker. Everything you log stays on this device.</p>
+      <p>A simple period tracker. Everything you log is saved privately to your account.</p>
       <p>To get started, tell us when your last period began.</p>
       <form id="welcome-form" novalidate>
         <div class="field">
@@ -952,6 +1261,16 @@ function render(el) {
   el.innerHTML = `
     <h1 tabindex="-1">Settings</h1>
 
+    <section class="card" aria-labelledby="account-h">
+      <h2 id="account-h">Account</h2>
+      <p class="muted small" style="margin-bottom:2px">Logged in as</p>
+      <p class="account-email" data-testid="account-email">${escapeHtml(auth.currentUser?.email || '')}</p>
+      <div class="btn-row">
+        <button type="button" class="btn btn-secondary" id="change-pw-btn" data-testid="change-password">Change password</button>
+        <button type="button" class="btn btn-primary" id="logout-btn" data-testid="logout">Log out</button>
+      </div>
+    </section>
+
     <form class="card" id="settings-form" novalidate>
       <h2>Cycle defaults</h2>
       <p class="muted small">Used until you’ve logged a few cycles — after that Bloom uses your own averages.</p>
@@ -969,7 +1288,7 @@ function render(el) {
 
     <section class="card" aria-labelledby="data-h">
       <h2 id="data-h">Your data</h2>
-      <p class="muted small">Everything is stored only in this browser. Export a backup to move it to another device.</p>
+      <p class="muted small">Your data is saved to your account and syncs across your devices. You can also download a backup file.</p>
       <div class="btn-row">
         <button type="button" class="btn btn-secondary" id="export-btn" data-testid="export">Export backup</button>
         <label class="btn btn-secondary" for="import-file">Import backup</label>
@@ -979,10 +1298,28 @@ function render(el) {
 
     <section class="card" aria-labelledby="danger-h">
       <h2 id="danger-h">Reset</h2>
-      <p class="muted small">Deletes all logs and settings from this device.</p>
+      <p class="muted small">Deletes all your logs and settings from your account, on every device.</p>
       <button type="button" class="btn btn-danger" id="reset-btn" data-testid="reset">Delete all data</button>
     </section>
   `;
+
+  el.querySelector('#logout-btn').addEventListener('click', async () => {
+    await logOut();
+    location.hash = '#/today';
+  });
+
+  el.querySelector('#change-pw-btn').addEventListener('click', async (e) => {
+    const btn = e.currentTarget;
+    btn.disabled = true;
+    try {
+      await sendPasswordResetEmail(auth, auth.currentUser.email);
+      toast('Password reset link sent to your email');
+    } catch (err) {
+      toast(authMessage(err));
+    } finally {
+      btn.disabled = false;
+    }
+  });
 
   el.querySelector('#settings-form').addEventListener('submit', (e) => {
     e.preventDefault();
@@ -1020,7 +1357,7 @@ function render(el) {
   });
 
   el.querySelector('#reset-btn').addEventListener('click', () => {
-    if (!confirm('Delete all Bloom data from this device? This can’t be undone.')) return;
+    if (!confirm('Delete all your Bloom data from your account? This can’t be undone.')) return;
     resetAll();
     toast('All data deleted');
     location.hash = '#/today';
@@ -1043,6 +1380,7 @@ function parseHash() {
 }
 
 function render({ moveFocus }) {
+  if (document.body.dataset.state !== 'app') return;
   const { name, params } = parseHash();
   const view = routes[name];
   main.innerHTML = '';
@@ -1063,7 +1401,27 @@ function render({ moveFocus }) {
 
 window.addEventListener('hashchange', () => render({ moveFocus: true }));
 onRefresh(() => render({ moveFocus: false }));
-render({ moveFocus: false });
+
+const setAppState = (s) => { document.body.dataset.state = s; };
+
+// Logged in → load data and show the app. Logged out → show the login screen.
+onAuthStateChanged(auth, async (user) => {
+  if (user) {
+    setAppState('loading');
+    await startSync(user);
+    const wasOnAuth = !firstLoad;
+    setAppState('app');
+    render({ moveFocus: false });
+    if (wasOnAuth) main.querySelector('h1')?.focus();
+  } else {
+    stopSync();
+    setState(defaults());
+    main.innerHTML = '';
+    setAppState('auth');
+    AuthView.show('login', { focus: !firstLoad });
+    firstLoad = false;
+  }
+});
 
 })();
 </script>
